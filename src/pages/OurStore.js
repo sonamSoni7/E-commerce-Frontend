@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from "react";
 import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
-import ReactStars from "react-rating-stars-component";
 import ProductCard from "../components/ProductCard";
-import Color from "../components/Color";
 import Container from "../components/Container";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllProducts } from "../features/products/productSlilce";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 
 const OurStore = () => {
   const [grid, setGrid] = useState(4);
   const productState = useSelector((state) => state?.product?.product);
-  const [brands, setBrands] = useState([]);
+  const [, setBrands] = useState([]);
   const [categories, setCategories] = useState([]);
 
   const [tags, setTags] = useState([]);
@@ -20,7 +18,7 @@ const OurStore = () => {
   //filter state
   const [tag, setTag] = useState(null);
   const [category, setCategory] = useState(null);
-  const [brand, setBrand] = useState(null);
+  const [brand] = useState(null);
   const [minPrice, setminPrice] = useState(null);
   const [maxPrice, setmaxPrice] = useState(null);
   const [sort, setSort] = useState(null);
@@ -43,13 +41,14 @@ const OurStore = () => {
 
   const dispatch = useDispatch();
   useEffect(() => {
+    const getProducts = () => {
+      dispatch(
+        getAllProducts({ sort, tag, category, minPrice, maxPrice })
+      );
+    };
     getProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sort, tag, brand, category, minPrice, maxPrice]);
-  const getProducts = () => {
-    dispatch(
-      getAllProducts({ sort, tag, category, minPrice, maxPrice })
-    );
-  };
 
   return (
     <>

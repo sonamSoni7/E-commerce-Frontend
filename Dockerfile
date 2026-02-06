@@ -4,5 +4,5 @@ COPY package.json package-lock.json ./
 RUN npm i
 COPY . .
 EXPOSE 5173
-CMD ["npm", "start"]
+CMD ["npm", "run","build"]
 # docker-compose up -d --build
