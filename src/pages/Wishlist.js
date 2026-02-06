@@ -1,4 +1,4 @@
-import  useEffect  from "react";
+import React, { useEffect } from "react";
 import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
 import Container from "../components/Container";
@@ -10,11 +10,8 @@ const Wishlist = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   useEffect(() => {
-    getWishlistFromDb();
-  }, []);
-  const getWishlistFromDb = () => {
     dispatch(getuserProductWishlist());
-  };
+  }, [dispatch]);
 
   const wishlistState = useSelector((state) => state?.auth?.wishlist?.wishlist);
   const removeFromWishlist = (id) => {

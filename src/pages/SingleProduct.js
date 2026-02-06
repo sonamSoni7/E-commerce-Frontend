@@ -5,11 +5,9 @@ import Meta from "../components/Meta";
 import ProductCard from "../components/ProductCard";
 
 import Color from "../components/Color";
-import { TbGitCompare } from "react-icons/tb";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Container from "../components/Container";
-import { addToWishlist } from "../features/products/productSlilce";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addRating,
@@ -44,15 +42,19 @@ const SingleProduct = () => {
     dispatch(getUserCart());
     dispatch(getAllProducts());
     window.scrollTo(0, 0); // Scroll to top when component mounts
-  }, [getProductId]);
+  }, [getProductId, dispatch]);
 
   useEffect(() => {
-    for (let index = 0; index < cartState?.length; index++) {
+    if (!cartState) return;
+    let found = false;
+    for (let index = 0; index < cartState.length; index++) {
       if (getProductId === cartState[index]?.productId?._id) {
-        setAlreadyAdded(true);
+        found = true;
+        break;
       }
     }
-  });
+    setAlreadyAdded(!!found);
+  }, [cartState, getProductId]);
 
   const uploadCart = async () => {
     if (color === null) {
@@ -77,7 +79,7 @@ const SingleProduct = () => {
     return url.startsWith("/") ? `${process.env.REACT_APP_API_BASE_URL}${url}` : url;
   };
 
-  const [orderedProduct, setorderedProduct] = useState(true);
+  const [orderedProduct] = useState(true);
   const copyToClipboard = (text) => {
     console.log("text", text);
     var textField = document.createElement("textarea");
@@ -88,24 +90,22 @@ const SingleProduct = () => {
     textField.remove();
   };
 
-  const closeModal = () => { };
   const [popularProduct, setPopularProduct] = useState([]);
 
   useEffect(() => {
-    let data = [];
+    if (!productsState) return;
+    const data = [];
     for (let index = 0; index < productsState.length; index++) {
       const element = productsState[index];
       if (element.tags === "popular") {
         data.push(element);
-      } else {
-        setPopularProduct(data);
       }
     }
-  }, [productState]);
+    setPopularProduct(data);
+  }, [productsState]);
 
   const [star, setStar] = useState(null);
   const [comment, setComment] = useState(null);
-  const [like, setLike] = useState(false);
   const [isFilled, setIsFilled] = useState(false);
 
   const handleToggle = () => {
@@ -249,13 +249,7 @@ const SingleProduct = () => {
                       />
                     </div>
                   )}
-                  <div
-                    className={
-                      alreadyAdded
-                        ? "ms-0"
-                        : "ms-5" + "d-flex align-items-center gap-30"
-                    }
-                  >
+                  <div className={alreadyAdded ? "ms-0" : "ms-5 d-flex align-items-center gap-30"}>
                     <button
                       className="button border-0"
                       // data-bs-toggle="modal"
@@ -294,14 +288,9 @@ const SingleProduct = () => {
                 </div>
                 <div className="d-flex gap-10 align-items-center my-3">
                   <h3 className="product-heading">Product Link:</h3>
-                  <a
-                    href="javascript:void(0);"
-                    onClick={() => {
-                      copyToClipboard(window.location.href);
-                    }}
-                  >
+                  <button type="button" className="btn btn-link p-0" onClick={() => copyToClipboard(window.location.href)}>
                     Copy Product Link
-                  </a>
+                  </button>
                 </div>
               </div>
             </div>
@@ -343,7 +332,7 @@ const SingleProduct = () => {
                 </div>
                 {orderedProduct && (
                   <div>
-                    <a className="text-dark text-decoration-underline" href="">
+                    <a className="text-dark text-decoration-underline" href="#review">
                       Write a Review
                     </a>
                   </div>
