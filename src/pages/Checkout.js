@@ -29,11 +29,11 @@ const Checkout = () => {
   const cartState = useSelector((state) => state?.auth?.cartProducts);
   const authState = useSelector((state) => state?.auth);
   const [totalAmount, setTotalAmount] = useState(null);
-  const [shippingInfo, setShippingInfo] = useState(null);
-  const [paymentInfo, setPaymentInfo] = useState({
-    razorpayPaymentId: "",
-    razorpayOrderId: "",
-  });
+  const [, setShippingInfo] = useState(null);
+  // const [paymentInfo, setPaymentInfo] = useState({
+  //   razorpayPaymentId: "",
+  //   razorpayOrderId: "",
+  // });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -58,6 +58,7 @@ const Checkout = () => {
 
   useEffect(() => {
     dispatch(getUserCart(config2));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -67,6 +68,7 @@ const Checkout = () => {
     ) {
       navigate("/my-orders");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authState]);
 
   const [cartProductState, setCartProductState] = useState([]);
@@ -117,6 +119,7 @@ const Checkout = () => {
       });
     }
     setCartProductState(items);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const checkOutHandler = async () => {

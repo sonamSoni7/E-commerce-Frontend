@@ -52,7 +52,7 @@ const ProductCard = (props) => {
               <div className="product-image">
                 <img
                   src={item?.images?.[0]?.url?.startsWith("/") ? `${process.env.REACT_APP_API_BASE_URL}${item?.images?.[0]?.url}` : (item?.images?.[0]?.url)}
-                  alt="product image"
+                  alt="product"
                   width="100%"
                   height="270px"
                   style={{ objectFit: "cover", display: "block" }}

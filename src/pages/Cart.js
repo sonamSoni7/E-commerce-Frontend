@@ -22,6 +22,7 @@ const Cart = () => {
         }`,
       Accept: "application/json",
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }), [getTokenFromLocalStorage?.token]);
 
   const dispatch = useDispatch();
@@ -46,6 +47,7 @@ const Cart = () => {
         dispatch(getUserCart(config2));
       }, 200);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productupdateDetail]);
 
   const deleteACartProduct = (id) => {
@@ -90,7 +92,7 @@ const Cart = () => {
                         <img
                           src={item?.productId?.images[0]?.url?.startsWith("/") ? `${process.env.REACT_APP_API_BASE_URL}${item?.productId?.images[0]?.url}` : item?.productId?.images[0]?.url}
                           className="img-fluid"
-                          alt="product image"
+                          alt="product"
                         />
                       </div>
                       <div className="w-75">

@@ -14,7 +14,7 @@ const Header = () => {
   const dispatch = useDispatch();
   const cartState = useSelector((state) => state?.auth?.cartProducts);
   const authState = useSelector((state) => state?.auth);
-  const [total, setTotal] = useState(null);
+  // const [total, setTotal] = useState(null);
   const productState = useSelector((state) => state?.product?.product);
   const navigate = useNavigate();
 
@@ -41,6 +41,7 @@ const Header = () => {
 
   useEffect(() => {
     dispatch(getUserCart(config2));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [productOpt, setProductOpt] = useState([]);
@@ -48,7 +49,7 @@ const Header = () => {
     let sum = 0;
     for (let index = 0; index < cartState?.length; index++) {
       sum = sum + Number(cartState[index].quantity) * cartState[index].price;
-      setTotal(sum);
+      // setTotal(sum);
     }
   }, [cartState]);
 
@@ -179,7 +180,7 @@ const Header = () => {
                 <NavLink to="/" className="text-gold fw-bold p-1" style={navItemStyle}>
                   Home
                 </NavLink>
-                
+
 
                 <NavLink to="/product" style={navItemStyle} className="text-gold fw-bold p-1">
                   Our Store

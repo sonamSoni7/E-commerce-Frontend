@@ -1,38 +1,35 @@
 import React, { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import Marquee from "react-fast-marquee";
+import { Link } from "react-router-dom";
+// import Marquee from "react-fast-marquee";
 import Container from "../components/Container";
-import { services } from "../utils/Data";
-import wish from "../images/wish.svg";
-import wishlist from "../images/wishlist.svg";
+// import { services } from "../utils/Data";
+// import wish from "../images/wish.svg";
+// import wishlist from "../images/wishlist.svg";
 import ProductCard from "../components/ProductCard";
-import SpecialProduct from "../components/SpecialProduct";
+// import SpecialProduct from "../components/SpecialProduct";
 
 import { useDispatch, useSelector } from "react-redux";
-import moment from "moment";
+// import moment from "moment";
 import { getAllProducts } from "../features/products/productSlilce";
-import ReactStars from "react-rating-stars-component";
-import { addToWishlist } from "../features/products/productSlilce";
-import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
+// import ReactStars from "react-rating-stars-component";
+// import { addToWishlist } from "../features/products/productSlilce";
+// import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 
 const Home = () => {
   const productState = useSelector((state) => state?.product?.product);
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    getProducts();
-  }, []);
 
   const getProducts = () => {
     dispatch(getAllProducts());
   };
 
-  const addToWish = (id) => {
-    //alert(id);
-    dispatch(addToWishlist(id));
-  };
+  useEffect(() => {
+    getProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <>
       <Container class1="home-wrapper-1 py-0 bg-cream">
@@ -161,7 +158,7 @@ const Home = () => {
             <h3 className="section-heading text-uppercase" style={{ fontFamily: "serif", letterSpacing: "2px" }}>Premium Products</h3>
             <p className="text-muted mb-5">Handpicked selections from our newest arrivals.</p>
           </div>
-          <ProductCard data={productState&&productState?.filter((item) => item.tags === "premium")} />
+          <ProductCard data={productState && productState?.filter((item) => item.tags === "premium")} />
         </div>
       </Container>
 
@@ -172,7 +169,7 @@ const Home = () => {
           </div>
         </div>
         <div className="row">
-          <ProductCard data={productState&&productState?.filter((item) => item.tags === "special")} />
+          <ProductCard data={productState && productState?.filter((item) => item.tags === "special")} />
         </div>
       </Container>
       <Container class1="popular-wrapper py-5 home-wrapper-2">
@@ -182,7 +179,7 @@ const Home = () => {
           </div>
         </div>
         <div className="row">
-          <ProductCard data={productState&&productState?.filter((item) => item.tags === "popular")} />
+          <ProductCard data={productState && productState?.filter((item) => item.tags === "popular")} />
         </div>
       </Container>
     </>
