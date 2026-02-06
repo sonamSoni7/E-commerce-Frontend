@@ -191,6 +191,11 @@ const Header = () => {
                 </NavLink>
 
                 {authState?.user && (
+                  <NavLink to="/my-orders" style={navItemStyle} className="text-gold fw-bold p-1">
+                    My Orders
+                  </NavLink>
+                )}
+                {authState?.user && (
                   <button
                     onClick={handleLogout}
                     className="btn bg-transparent nav-link border-0 text-gold p-0 fw-bold"
@@ -198,7 +203,6 @@ const Header = () => {
                     Logout
                   </button>
                 )}
-
               </nav>
             </div>
           </div>
