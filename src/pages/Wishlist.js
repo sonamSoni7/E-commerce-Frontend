@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import  useEffect  from "react";
 import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
 import Container from "../components/Container";
