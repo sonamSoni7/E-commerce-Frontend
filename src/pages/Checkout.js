@@ -157,6 +157,7 @@ const Checkout = () => {
           orderCreationId: order_id,
           razorpayPaymentId: response.razorpay_payment_id,
           razorpayOrderId: response.razorpay_order_id,
+          razorpaySignature: response.razorpay_signature,
         };
 
         const result = await axios.post(

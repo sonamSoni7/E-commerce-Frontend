@@ -8,6 +8,7 @@ import Color from "../components/Color";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { useLocation, useNavigate } from "react-router-dom";
 import Container from "../components/Container";
+import DOMPurify from "dompurify";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addRating,
@@ -81,7 +82,6 @@ const SingleProduct = () => {
 
   const [orderedProduct] = useState(true);
   const copyToClipboard = (text) => {
-    console.log("text", text);
     var textField = document.createElement("textarea");
     textField.innerText = text;
     document.body.appendChild(textField);
@@ -303,7 +303,9 @@ const SingleProduct = () => {
             <h4>Description</h4>
             <div className="bg-white p-3">
               <p
-                dangerouslySetInnerHTML={{ __html: productState?.description }}
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(productState?.description),
+                }}
               ></p>
             </div>
           </div>
