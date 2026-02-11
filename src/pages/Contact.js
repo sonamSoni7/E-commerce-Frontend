@@ -37,11 +37,9 @@ const Contact = () => {
     <>
       <Meta title={"Contact Us"} />
       <BreadCrumb title="Contact Us" />
-      <Container class1="contact-wrapper py-5 home-wrapper-2">
-        <div className="row">
-          <div className="col-12 mt-5">
-            <div className="contact-inner-wrapper d-flex justify-content-between ">
-              <div>
+      <Container class1="contact-wrapper py-2 home-wrapper-2">
+            <div className="contact-wrapper d-flex flex-column align-items-center">
+              <div className="mb-5">
                 <h3 className="contact-title mb-4">Contact</h3>
                 <form
                   action=""
@@ -51,7 +49,7 @@ const Contact = () => {
                   <div>
                     <input
                       type="text"
-                      className="form-control"
+                      className="form-control border-0 border-radius-5"
                       placeholder="Name"
                       name="name"
                       onChange={formik.handleChange("name")}
@@ -66,7 +64,7 @@ const Contact = () => {
                   <div>
                     <input
                       type="email"
-                      className="form-control"
+                      className="form-control border-0 border-radius-5"
                       placeholder="Email"
                       name="email"
                       onChange={formik.handleChange("email")}
@@ -80,7 +78,7 @@ const Contact = () => {
                   <div>
                     <input
                       type="tel"
-                      className="form-control"
+                      className="form-control border-0 border-radius-5"
                       placeholder="Mobile Number"
                       name="mobile"
                       onChange={formik.handleChange("mobile")}
@@ -94,7 +92,7 @@ const Contact = () => {
                   <div>
                     <textarea
                       id=""
-                      className="w-100 form-control"
+                      className="w-100 form-control border-0 border-radius-5"
                       cols="30"
                       rows="4"
                       placeholder="Comments"
@@ -118,7 +116,7 @@ const Contact = () => {
                   <ul className="ps-0">
                     <li className="mb-3 d-flex gap-15 align-items-center">
                       <BiPhoneCall className="fs-5" />
-                      <a href="tel:+91 8264954234">+91-9310039944</a>
+                      <a href="tel:+91-9310039944">+91-9310039944</a>
                     </li>
                     <li className="mb-3 d-flex gap-15 align-items-center">
                       <AiOutlineMail className="fs-5" />
@@ -134,8 +132,6 @@ const Contact = () => {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
       </Container>
     </>
   );

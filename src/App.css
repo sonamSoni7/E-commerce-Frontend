@@ -850,6 +850,44 @@ footer .input-group-text {
 
 /* Cart Page Ends here */
 
+@media (max-width: 768px) {
+  .cart-header {
+    display: none !important;
+  }
+
+  .cart-data {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 15px;
+  }
+
+  .cart-col-1,
+  .cart-col-2,
+  .cart-col-3,
+  .cart-col-4 {
+    width: 100% !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* Add labels for mobile view if needed, or just let them stack */
+  .cart-col-2::before {
+    content: "Price:";
+    margin-right: 10px;
+  }
+
+  .cart-col-3::before {
+    content: "Quantity:";
+    margin-right: 10px;
+  }
+
+  .cart-col-4::before {
+    content: "Total:";
+    margin-right: 10px;
+  }
+}
+
 /* Shippping Page */
 
 .total {

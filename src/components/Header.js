@@ -45,13 +45,6 @@ const Header = () => {
   }, []);
 
   const [productOpt, setProductOpt] = useState([]);
-  useEffect(() => {
-    let sum = 0;
-    for (let index = 0; index < cartState?.length; index++) {
-      sum = sum + Number(cartState[index].quantity) * cartState[index].price;
-      // setTotal(sum);
-    }
-  }, [cartState]);
 
   useEffect(() => {
     let data = [];
@@ -70,48 +63,26 @@ const Header = () => {
     <>
       <header
         className="header-upper py-3"
-        style={{ borderBottom: "1px solid var(--color-3b4149)" }}
-      >
+        style={{ borderBottom: "1px solid var(--color-3b4149)" }}>
         <div className="container-xxl">
-          <div className="row align-items-center gy-3">
+          {/* LOGO */}
+          <Link className="text-decoration-none align-items-center d-flex gap-10" to="/">
+            <img
+              src="/images/adisha/logo.png"
+              alt="Adisha Jewellery"
+              className="img-fluid"
+              style={{
+                maxHeight: "60px",
+                objectFit: "contain",
+              }}
+            />
+            <h2 style={{ color: "var(--color-febd69)" }}>Adisha Jewellery</h2>
+          </Link>
 
-            {/* LOGO */}
-            <div className="col-12 col-md-4 col-lg-3 d-flex justify-content-center justify-content-md-start align-items-center gap-3">
-              <img
-                src="/images/adisha/logo.png"
-                alt="Adisha"
-                style={{
-                  width: "80px",
-                  height: "80px",
-                  objectFit: "contain",
-                }}
-              />
-              {/* {productState} */}
-              <h2 className="mb-0 text-center text-md-start">
-                <Link className="text-decoration-none" to="/">
-                  <span
-                    style={{
-                      fontFamily: "serif",
-                      fontSize: "28px",
-                      color: "var(--color-febd69)",
-                    }}
-                  >
-                    Adisha
-                  </span>
-                  <br />
-                  <span
-                    className="fs-6 text-white text-uppercase"
-                    style={{ letterSpacing: "2px" }}
-                  >
-                    Jewellery
-                  </span>
-                </Link>
-              </h2>
-            </div>
-
-            {/* SEARCH */}
-            <div className="col-12 col-md-5 col-lg-6">
-              <div className="input-group w-100">
+          <div className="row align-items-center mt-3">
+            {/* SEARCH BAR */}
+            <div className="col-12 col-lg-6 order-1 order-lg-2 d-flex justify-content-center">
+              <div className="input-group w-100 w-lg-75">
                 <Typeahead
                   id="product-search"
                   options={productOpt}
@@ -124,10 +95,14 @@ const Header = () => {
                       dispatch(getAProduct(selected[0]?.prod));
                     }
                   }}
+                  minLength={2}
                 />
                 <span
                   className="input-group-text border-0"
-                  style={{ backgroundColor: "var(--color-febd69)" }}
+                  style={{
+                    backgroundColor: "var(--color-febd69)",
+                    cursor: "pointer",
+                  }}
                 >
                   <BsSearch className="text-white" />
                 </span>
@@ -135,32 +110,49 @@ const Header = () => {
             </div>
 
             {/* ICONS */}
-            <div className="col-12 col-md-3 col-lg-3 d-flex justify-content-center justify-content-md-end">
-              <div className="d-flex align-items-center gap-5">
+            <div className="col-12 col-lg-4 order-2 order-lg-3 mt-3 mt-lg-0">
+              <div className="d-flex justify-content-center justify-content-lg-end gap-5">
 
-                <Link to="/wishlist">
+                <Link to="/wishlist" className="text-white">
                   <img
                     src={wishlist}
                     alt="wishlist"
-                    style={{ filter: "brightness(0) invert(1)" }}
+                    style={{ filter: "brightness(0) invert(1)", width: "35px" }}
                   />
                 </Link>
 
                 <Link
                   to={authState?.user ? "/my-profile" : "/login"}
-                  className="text-gold text-decoration-none"
+                  className="d-flex align-items-center gap-1 text-white text-decoration-none"
                 >
-                  <img src={user} alt="user" style={{ filter: "brightness(0) invert(1)" }} />
-                  {authState?.user ? authState.user.firstname : "Log in"}
+                  <img
+                    src={user}
+                    alt="user"
+                    style={{ filter: "brightness(0) invert(1)", width: "35px" }}
+                  />
+                  <span className="d-none d-lg-block" style={{ fontSize: "13px" }}>
+                    {authState?.user ? authState.user.firstname : "Log in"}
+                  </span>
                 </Link>
 
-                <Link to="/cart" className="position-relative">
+                <Link
+                  to="/cart"
+                  className="text-white position-relative"
+                >
                   <img
                     src={cart}
                     alt="cart"
-                    style={{ filter: "brightness(0) invert(1)" }}
+                    style={{ filter: "brightness(0) invert(1)", width: "35px" }}
                   />
-                  <span className="badge bg-white text-dark position-absolute top-0 start-100 translate-middle">
+                  <span
+                    className="badge bg-white text-dark rounded-circle"
+                    style={{
+                      fontSize: "10px",
+                      position: "absolute",
+                      top: "-5px",
+                      right: "-8px",
+                    }}
+                  >
                     {cartState?.length || 0}
                   </span>
                 </Link>

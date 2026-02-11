@@ -9,6 +9,7 @@ import {
   deleteCartProduct,
   getUserCart,
   updateCartProduct,
+  applyCoupon,
 } from "../features/user/userSlice";
 
 const Cart = () => {
@@ -33,22 +34,10 @@ const Cart = () => {
 
   useEffect(() => {
     dispatch(getUserCart(config2));
+    window.scrollTo(0, 0);
   }, [dispatch, config2]);
 
-  useEffect(() => {
-    if (productupdateDetail !== null) {
-      dispatch(
-        updateCartProduct({
-          cartItemId: productupdateDetail?.cartItemId,
-          quantity: productupdateDetail?.quantity,
-        })
-      );
-      setTimeout(() => {
-        dispatch(getUserCart(config2));
-      }, 200);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [productupdateDetail]);
+
 
   const deleteACartProduct = (id) => {
     dispatch(deleteCartProduct({ id: id, config2: config2 }));
@@ -66,6 +55,51 @@ const Cart = () => {
       setTotalAmount(sum);
     }
   }, [userCartState]);
+
+  const [coupon, setCoupon] = useState("");
+  const [totalAfterDiscount, setTotalAfterDiscount] = useState(0);
+  const cartProduct = useSelector((state) => state.auth.cartProduct);
+
+  const applyCouponCode = () => {
+    dispatch(applyCoupon({ coupon }));
+  };
+
+  const cartProductState = useSelector((state) => state.auth.cartProduct);
+
+  useEffect(() => {
+    if (cartProductState && typeof cartProductState !== 'object') {
+      setTotalAfterDiscount(cartProductState);
+    } else {
+      setTotalAfterDiscount(0);
+    }
+  }, [cartProductState]);
+
+  const [quantities, setQuantities] = useState({});
+
+  useEffect(() => {
+    if (userCartState) {
+      const q = {};
+      userCartState.forEach(item => {
+        q[item._id] = item.quantity;
+      });
+      setQuantities(q);
+    }
+  }, [userCartState]);
+
+  // Remove the old useEffect that watched productupdateDetail. 
+  // We will dispatch directly from onBlur.
+
+  const updateCartItem = (id, quantity) => {
+    dispatch(
+      updateCartProduct({
+        cartItemId: id,
+        quantity: quantity,
+      })
+    );
+    setTimeout(() => {
+      dispatch(getUserCart(config2));
+    }, 200);
+  };
 
   return (
     <>
@@ -88,14 +122,15 @@ const Cart = () => {
                     className="cart-data py-3 mb-2 d-flex justify-content-between align-items-center"
                   >
                     <div className="cart-col-1 gap-15 d-flex align-items-center">
-                      <div className="w-25">
+                      <div className="w-20">
                         <img
                           src={item?.productId?.images[0]?.url?.startsWith("/") ? `${process.env.REACT_APP_API_BASE_URL}${item?.productId?.images[0]?.url}` : item?.productId?.images[0]?.url}
                           className="img-fluid"
+                          style={{ maxWidth: "100px", maxHeight: "100px" }}
                           alt="product"
                         />
                       </div>
-                      <div className="w-75">
+                      <div className="w-60">
                         <p>{item?.productId?.title}</p>
 
                         <p className="d-flex gap-3">
@@ -109,10 +144,10 @@ const Cart = () => {
                       </div>
                     </div>
                     <div className="cart-col-2">
-                      <h5 className="price">Rs. {item?.price}</h5>
+                      <h5 className="price">Rs. {Number(item?.price).toFixed(2)}</h5>
                     </div>
-                    <div className="cart-col-3 d-flex align-items-center gap-15">
-                      <div>
+                    <div className="cart-col-3 d-flex align-items-center">
+                      <div className="d-flex gap-10">
                         <input
                           className="form-control"
                           type="number"
@@ -120,12 +155,24 @@ const Cart = () => {
                           min={1}
                           max={10}
                           id={"card" + item?._id}
-                          value={item?.quantity}
+                          value={quantities[item?._id] !== undefined ? quantities[item?._id] : item?.quantity}
                           onChange={(e) => {
-                            setProductupdateDetail({
-                              cartItemId: item?._id,
-                              quantity: e.target.value,
-                            });
+                            const val = e.target.value;
+                            // Just update local state to allow typing
+                            setQuantities({ ...quantities, [item?._id]: val });
+                          }}
+                          onBlur={(e) => {
+                            let val = parseInt(e.target.value);
+                            const maxVal = Math.min(10, item?.productId?.quantity || 10);
+
+                            if (isNaN(val) || val < 1) val = 1;
+                            if (val > maxVal) val = maxVal;
+
+                            // Optimistic update
+                            setQuantities({ ...quantities, [item?._id]: val });
+
+                            // Server update
+                            updateCartItem(item?._id, val);
                           }}
                         />
                       </div>
@@ -140,7 +187,7 @@ const Cart = () => {
                     </div>
                     <div className="cart-col-4">
                       <h5 className="price">
-                        Rs. {item?.quantity * item?.price}
+                        Rs. {(item?.quantity * item?.price).toFixed(2)}
                       </h5>
                     </div>
                   </div>
@@ -148,20 +195,44 @@ const Cart = () => {
               })}
           </div>
           <div className="col-12 py-2 mt-4">
-            <div className="d-flex justify-content-between align-items-baseline">
-              <Link to="/product" className="button">
+            <div className="d-flex flex-wrap flex-column align-items-center justify-content-between align-items-baseline">
+              <Link to="/product" className="button mb-5">
                 Continue To Shopping
               </Link>
               {(totalAmount !== null || totalAmount !== 0) && (
-                <div className="d-flex flex-column align-items-end">
+                <div className="d-flex flex-column align-items-start">
                   <h4>
                     SubTotal: Rs.{" "}
-                    {!userCartState?.length ? 0 : totalAmount ? totalAmount : 0}
+                    {!userCartState?.length ? "0.00" : totalAmount ? Number(totalAmount).toFixed(2) : "0.00"}
                   </h4>
+                  <div className="mb-3">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Enter Coupon Code"
+                      value={coupon}
+                      onChange={(e) => setCoupon(e.target.value)}
+                    />
+                    <button className="button mt-3" onClick={applyCouponCode}>
+                      Apply Coupon
+                    </button>
+                  </div>
+                  {totalAfterDiscount > 0 && (
+                    <div className="mb-3">
+                      <h4>Discounted Total: Rs. {totalAfterDiscount}</h4>
+                      <p className="text-success">Coupon Applied!</p>
+                    </div>
+                  )}
                   <p>Taxes and shipping calculated at checkout</p>
-                  <Link to="/checkout" className="button">
-                    Checkout
-                  </Link>
+                  {userCartState && userCartState.length > 0 ? (
+                    <Link to="/checkout" className="button">
+                      Checkout
+                    </Link>
+                  ) : (
+                    <button disabled className="button bg-secondary">
+                      Checkout
+                    </button>
+                  )}
                 </div>
               )}
             </div>

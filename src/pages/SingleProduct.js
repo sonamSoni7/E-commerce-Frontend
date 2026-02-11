@@ -5,10 +5,9 @@ import Meta from "../components/Meta";
 import ProductCard from "../components/ProductCard";
 
 import Color from "../components/Color";
-import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
+import { AiOutlineHeart, AiFillHeart, AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 import { useLocation, useNavigate } from "react-router-dom";
 import Container from "../components/Container";
-import DOMPurify from "dompurify";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addRating,
@@ -130,6 +129,20 @@ const SingleProduct = () => {
     return false;
   };
 
+  const handleNext = () => {
+    if (!productState?.images?.length) return;
+    const currentIndex = productState?.images?.findIndex(img => img.url === activeImage);
+    const nextIndex = (currentIndex + 1) % productState.images.length;
+    setActiveImage(productState.images[nextIndex].url);
+  };
+
+  const handlePrev = () => {
+    if (!productState?.images?.length) return;
+    const currentIndex = productState?.images?.findIndex(img => img.url === activeImage);
+    const prevIndex = (currentIndex - 1 + productState.images.length) % productState.images.length;
+    setActiveImage(productState.images[prevIndex].url);
+  };
+
   return (
     <>
       <Meta title={"Product Name"} />
@@ -137,26 +150,45 @@ const SingleProduct = () => {
       <Container class1="main-product-wrapper py-5 home-wrapper-2">
         <div className="row">
           <div className="col-12 col-lg-6 mb-4 mb-lg-0">
-            <div className="main-product-image">
-              <div>
+            <div className="main-product-image position-relative">
+              <div style={{ height: "500px", width: "100%", backgroundColor: "white" }}>
                 <img
                   src={getImageUrl(activeImage || productState?.images?.[0]?.url)}
                   alt="product"
                   className="img-fluid"
                 />
               </div>
+              {productState?.images?.length > 1 && (
+                <>
+                  <button
+                    onClick={handlePrev}
+                    className="position-absolute border-0 bg-white rounded-circle d-flex align-items-center justify-content-center"
+                    style={{ top: '50%', left: '10px', transform: 'translateY(-50%)', width: '30px', height: '30px', cursor: 'pointer', zIndex: 1, boxShadow: '0 0 5px rgba(0,0,0,0.2)' }}
+                  >
+                    <AiOutlineLeft />
+                  </button>
+                  <button
+                    onClick={handleNext}
+                    className="position-absolute border-0 bg-white rounded-circle d-flex align-items-center justify-content-center"
+                    style={{ top: '50%', right: '10px', transform: 'translateY(-50%)', width: '30px', height: '30px', cursor: 'pointer', zIndex: 1, boxShadow: '0 0 5px rgba(0,0,0,0.2)' }}
+                  >
+                    <AiOutlineRight />
+                  </button>
+                </>
+              )}
             </div>
-            <div className="other-product-images d-flex flex-wrap gap-15">
+            <div className="other-product-images d-flex gap-15 overflow-auto mt-3 p-1" style={{ flexWrap: 'nowrap', scrollBehavior: 'smooth' }}>
               {productState?.images.map((item, index) => {
                 return (
                   <div key={index}
-                    className="cursor-pointer"
+                    className="cursor-pointer flex-shrink-0"
                     onClick={() => setActiveImage(item?.url)}
-                    style={{ border: activeImage === item?.url ? "2px solid #febd69" : "1px solid #eba446", padding: "5px" }}>
+                    style={{ border: activeImage === item?.url ? "2px solid #febd69" : "1px solid #eba446", padding: "5px", width: '25%' }}>
                     <img
                       src={getImageUrl(item?.url)}
                       className="img-fluid"
                       alt=""
+                      style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
                     />
                   </div>
                 );
@@ -202,26 +234,29 @@ const SingleProduct = () => {
                 </div>
                 <div className="d-flex gap-10 align-items-center my-2">
                   <h3 className="product-heading">Availability :</h3>
-                <p className="product-data">In Stock</p>
-              </div>
-              <div className="d-flex gap-10 align-items-center my-2 mb-3">
-                {productState?.quantity < 1000 && (
-                  <p 
-                    style={{
-                      backgroundColor: "#fff2f2",
-                      color: "#db4444",
-                      padding: "10px 15px",
-                      borderRadius: "5px",
-                      border: "1px solid #f5c6c6",
-                      fontSize: "14px",
-                      fontWeight: "500",
-                      width: "100%"
-                    }}
-                  >
-                   Hurry Up! Only {productState?.quantity} Item(s) left in stock!
-                  </p>
-                )}
-              </div>
+                  {productState?.quantity > 0 ?
+                    <p className="product-data">In Stock</p>
+                    : <p className="product-data">Out of Stock</p>
+                  }
+                </div>
+                <div className="d-flex gap-10 align-items-center my-2 mb-3">
+                  {productState?.quantity < 1000 && (
+                    <p
+                      style={{
+                        backgroundColor: "#fff2f2",
+                        color: "#db4444",
+                        padding: "10px 15px",
+                        borderRadius: "5px",
+                        border: "1px solid #f5c6c6",
+                        fontSize: "14px",
+                        fontWeight: "500",
+                        width: "100%"
+                      }}
+                    >
+                      Hurry Up! Only {productState?.quantity} Item(s) left in stock!
+                    </p>
+                  )}
+                </div>
                 {alreadyAdded === false && (
                   <div className="d-flex gap-10 flex-column mt-2 mb-3 ">
                     <h3 className="product-heading">Color :</h3>
@@ -231,37 +266,54 @@ const SingleProduct = () => {
                     />
                   </div>
                 )}
-
-                <div className="d-flex align-items-center gap-15 flex-row mt-2 mb-3">
-                  <h3 className="product-heading">Quantity :</h3>
-                  {alreadyAdded === false && (
-                    <div className="">
-                      <input
-                        type="number"
-                        name=""
-                        min={1}
-                        max={10}
-                        className="form-control"
-                        style={{ width: "70px" }}
-                        id=""
-                        onChange={(e) => setQuantity(e.target.value)}
-                        value={quantity}
-                      />
-                    </div>
-                  )}
-                  <div className={alreadyAdded ? "ms-0" : "ms-5 d-flex align-items-center gap-30"}>
-                    <button
-                      className="button border-0"
-                      // data-bs-toggle="modal"
-                      // data-bs-target="#staticBackdrop"
-                      type="button"
-                      onClick={() => {
-                        alreadyAdded ? navigate("/cart") : uploadCart();
+                {alreadyAdded === false && (
+                  <div className="d-flex flex-column align-items-start gap-10 flex-row mt-2 mb-3">
+                    <h3 className="product-heading mb-3">Quantity :</h3>
+                    <input
+                      type="number"
+                      name=""
+                      min={1}
+                      max={Math.min(10, productState?.quantity)}
+                      className="form-control"
+                      style={{ width: "70px" }}
+                      id=""
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        // Allow empty string for typing
+                        if (val === "") {
+                          setQuantity("");
+                          return;
+                        }
+                        const intVal = parseInt(val);
+                        if (!isNaN(intVal)) {
+                          const maxVal = Math.min(10, productState?.quantity);
+                          if (intVal > maxVal) {
+                            setQuantity(maxVal);
+                          } else {
+                            setQuantity(intVal);
+                          }
+                        }
                       }}
-                    >
-                      {alreadyAdded ? "Go to Cart" : "Add to Cart "}
-                    </button>
+                      onBlur={() => {
+                        // Enforce Min and Fallback
+                        if (quantity === "" || quantity < 1) {
+                          setQuantity(1);
+                        }
+                      }}
+                      value={quantity}
+                    />
                   </div>
+                )}
+                <div className="d-flex align-items-start gap-10 mt-2 mb-3">
+                  <button
+                    className="button border-0"
+                    type="button"
+                    onClick={() => {
+                      alreadyAdded ? navigate("/cart") : uploadCart();
+                    }}
+                  >
+                    {alreadyAdded ? "Go to Cart" : "Add to Cart "}
+                  </button>
                 </div>
                 <div className="d-flex align-items-center gap-15">
                   <div>
@@ -304,7 +356,7 @@ const SingleProduct = () => {
             <div className="bg-white p-3">
               <p
                 dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(productState?.description),
+                  __html: productState?.description,
                 }}
               ></p>
             </div>
@@ -316,33 +368,27 @@ const SingleProduct = () => {
           <div className="col-12">
             <h3 id="review">Reviews</h3>
             <div className="review-inner-wrapper">
-              <div className="review-head d-flex justify-content-between align-items-end">
-                <div>
-                  <h4 className="mb-2">Customer Reviews</h4>
-                  <div className="d-flex align-items-center gap-10">
-                    <ReactStars
-                      count={5}
-                      size={24}
-                      value={productState?.totalrating?.toString()}
-                      edit={false}
-                      activeColor="#ffd700"
-                    />
-                    <p className="mb-0">
-                      Based on {productState?.ratings?.length} Reviews
-                    </p>
-                  </div>
-                </div>
-                {orderedProduct && (
-                  <div>
-                    <a className="text-dark text-decoration-underline" href="#review">
-                      Write a Review
-                    </a>
-                  </div>
-                )}
+              {/* <div className="review-head d-flex justify-content-between align-items-end"> */}
+              <div>
+                <h4 className="mb-2">Customer Reviews</h4>
+                <ReactStars
+                  count={5}
+                  size={24}
+                  value={productState?.totalrating?.toString()}
+                  edit={false}
+                  activeColor="#ffd700"
+                />
+                <p className="mb-4">
+                  Based on {productState?.ratings?.length} Reviews
+                </p>
               </div>
-              <div className="review-form py-4">
-                <h4>Write a Review</h4>
-
+              {orderedProduct && (
+                <a className="text-dark text-decoration-underline" href="#review">
+                  <h4>Write a Review</h4>
+                </a>
+              )}
+              {/* </div> */}
+              <div className="review-form py-2">
                 <div>
                   <ReactStars
                     count={5}

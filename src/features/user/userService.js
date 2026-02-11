@@ -122,7 +122,12 @@ const emptyCart = async (data) => {
     return response.data;
   }
 };
-
+const applyCoupon = async (data) => {
+  const response = await axios.post(`${base_url}user/cart/apply-coupon`, data, config);
+  if (response.data) {
+    return response.data;
+  }
+};
 export const authService = {
   register,
   login,
@@ -137,4 +142,7 @@ export const authService = {
   forgotPasswordToken,
   resetPass,
   emptyCart,
+  applyCoupon,
 };
+
+

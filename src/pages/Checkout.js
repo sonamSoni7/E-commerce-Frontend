@@ -18,7 +18,7 @@ let shippingSchema = yup.object({
   firstname: yup.string().required("First Name is Required"),
   lastname: yup.string().required("Last Name is Required"),
   address: yup.string().required("Address Details are Required"),
-  state: yup.string().required("S tate is Required"),
+  state: yup.string().required("State is Required"),
   city: yup.string().required("city is Required"),
   country: yup.string().required("country is Required"),
   pincode: yup.number("Pincode No is Required").required().positive().integer(),
@@ -30,19 +30,19 @@ const Checkout = () => {
   const authState = useSelector((state) => state?.auth);
   const [totalAmount, setTotalAmount] = useState(null);
   const [, setShippingInfo] = useState(null);
-  // const [paymentInfo, setPaymentInfo] = useState({
-  //   razorpayPaymentId: "",
-  //   razorpayOrderId: "",
-  // });
   const navigate = useNavigate();
 
   useEffect(() => {
     let sum = 0;
     for (let index = 0; index < cartState?.length; index++) {
       sum = sum + Number(cartState[index].quantity) * cartState[index].price;
-      setTotalAmount(sum);
     }
-  }, [cartState]);
+    if (authState?.cartProduct && typeof authState?.cartProduct !== 'object') {
+      setTotalAmount(Number(authState?.cartProduct));
+    } else {
+      setTotalAmount(Number(sum));
+    }
+  }, [cartState, authState]);
 
   const getTokenFromLocalStorage = localStorage.getItem("customer")
     ? JSON.parse(localStorage.getItem("customer"))
@@ -58,6 +58,7 @@ const Checkout = () => {
 
   useEffect(() => {
     dispatch(getUserCart(config2));
+    window.scrollTo(0, 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -133,7 +134,7 @@ const Checkout = () => {
     }
     const result = await axios.post(
       `${process.env.REACT_APP_API_BASE_URL}/api/user/order/checkout`,
-      { amount: totalAmount + 100 },
+      {},
       config
     );
 
@@ -168,9 +169,6 @@ const Checkout = () => {
 
         dispatch(
           createAnOrder({
-            totalPrice: totalAmount,
-            totalPriceAfterDiscount: totalAmount,
-            orderItems: cartProductState,
             paymentInfo: result.data,
             shippingInfo: JSON.parse(localStorage.getItem("address")),
           })
@@ -196,7 +194,7 @@ const Checkout = () => {
     <>
       <Container class1="checkout-wrapper py-5 home-wrapper-2">
         <div className="row">
-          <div className="col-7">
+          <div className="col-12 col-md-7">
             <div className="checkout-left-data">
               <h3 className="website-name">Adisha Jewellery</h3>
               <nav
@@ -392,15 +390,15 @@ const Checkout = () => {
                   </div>
                 </div>
                 <div className="w-100">
-                  <div className="d-flex justify-content-between align-items-center">
-                    <Link to="/cart" className="text-dark">
+                  <div className="d-flex flex-wrap justify-content-between align-items-center">
+                    <Link to="/cart" className="text-dark mb-3">
                       <BiArrowBack className="me-2" />
                       Return to Cart
                     </Link>
-                    <Link to="/cart" className="button">
+                    <Link to="/cart" className="button mb-3">
                       Continue to Shipping
                     </Link>
-                    <button className="button" type="submit">
+                    <button className="button mb-3" type="submit">
                       Place Order
                     </button>
                   </div>
@@ -408,62 +406,95 @@ const Checkout = () => {
               </form>
             </div>
           </div>
-          <div className="col-5">
+          <div className="col-12 col-md-5">
             <div className="border-bottom py-4">
               {cartState &&
                 cartState?.map((item, index) => {
                   return (
                     <div
                       key={index}
-                      className="d-flex gap-10 mb-2 align-align-items-center"
+                      className="d-flex align-items-center justify-content-between mb-2 gap-3"
                     >
-                      <div className="w-75 d-flex gap-10">
-                        <div className="w-25 position-relative">
-                          <span
-                            style={{ top: "-10px", right: "2px" }}
-                            className="badge bg-secondary text-white rounded-circle p-2 position-absolute"
+                      {/* LEFT: Image + Details */}
+                      <div className="d-flex align-items-start gap-3 flex-grow-1">
+
+                        {/* IMAGE */}
+                        <img
+                          src={
+                            item?.productId?.images[0]?.url?.startsWith("/")
+                              ? `${process.env.REACT_APP_API_BASE_URL}${item?.productId?.images[0]?.url}`
+                              : item?.productId?.images[0]?.url
+                          }
+                          alt="product"
+                          className="img-fluid rounded"
+                          style={{
+                            width: "80px",
+                            height: "80px",
+                            objectFit: "contain",
+                          }}
+                        />
+
+                        {/* PRODUCT DETAILS */}
+                        <div className="d-flex flex-column">
+                          <h5
+                            style={{
+                              fontSize: "15px",
+                              fontWeight: "500",
+                              color: "var(--color-1c1c1b)",
+                              marginBottom: "4px",
+                            }}
                           >
-                            {item?.quantity}
-                          </span>
-                          <img
-                            src={item?.productId?.images[0]?.url?.startsWith("/") ? `${process.env.REACT_APP_API_BASE_URL}${item?.productId?.images[0]?.url}` : item?.productId?.images[0]?.url}
-                            width={100}
-                            height={100}
-                            alt="product"
-                          />
-                        </div>
-                        <div>
-                          <h5 className="total-price">
                             {item?.productId?.title}
                           </h5>
-                          <p className="total-price">{item?.color?.title}</p>
+
+                          <div className="d-flex align-items-center gap-2">
+                            <span style={{ fontSize: "13px" }}>Color:</span>
+                            <ul className="colors ps-0 mb-0">
+                              <li
+                                style={{
+                                  backgroundColor: item?.color?.title,
+                                  width: "15px",
+                                  height: "15px",
+                                }}
+                              ></li>
+                            </ul>
+                          </div>
+
+                          <span style={{ fontSize: "13px" }}>Price: Rs. {item?.price}</span>
+                          <span style={{ fontSize: "13px" }}>Quantity: {item?.quantity}</span>
                         </div>
                       </div>
-                      <div className="flex-grow-1">
-                        <h5 className="total">
-                          Rs. {item?.price * item?.quantity}
+
+                      {/* RIGHT: TOTAL */}
+                      <div
+                        className="text-end"
+                        style={{ minWidth: "90px" }}
+                      >
+                        <h5 className="total mb-0">
+                          Rs. {(item?.price * item?.quantity).toFixed(2)}
                         </h5>
                       </div>
                     </div>
                   );
+
                 })}
             </div>
             <div className="border-bottom py-4">
               <div className="d-flex justify-content-between align-items-center">
                 <p className="total">Subtotal</p>
                 <p className="total-price">
-                  Rs. {totalAmount ? totalAmount : "0"}
+                  Rs. {totalAmount ? Number(totalAmount).toFixed(2) : "0.00"}
                 </p>
               </div>
               <div className="d-flex justify-content-between align-items-center">
                 <p className="mb-0 total">Shipping</p>
-                <p className="mb-0 total-price">Rs. 100</p>
+                <p className="mb-0 total-price">Rs. 100.00</p>
               </div>
             </div>
-            <div className="d-flex justify-content-between align-items-center border-bootom py-4">
+            <div className="d-flex justify-content-between align-items-center border-bottom py-4">
               <h4 className="total">Total</h4>
               <h5 className="total-price">
-                Rs. {totalAmount ? totalAmount + 100 : "0"}
+                Rs. {totalAmount ? (Number(totalAmount) + 100).toFixed(2) : "0.00"}
               </h5>
             </div>
           </div>
