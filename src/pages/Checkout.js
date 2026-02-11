@@ -72,7 +72,7 @@ const Checkout = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authState]);
 
-  const [cartProductState, setCartProductState] = useState([]);
+  const [, setCartProductState] = useState([]);
 
   const formik = useFormik({
     initialValues: {

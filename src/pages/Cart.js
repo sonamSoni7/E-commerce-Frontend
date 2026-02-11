@@ -27,8 +27,6 @@ const Cart = () => {
   }), [getTokenFromLocalStorage?.token]);
 
   const dispatch = useDispatch();
-
-  const [productupdateDetail, setProductupdateDetail] = useState(null);
   const [totalAmount, setTotalAmount] = useState(null);
   const userCartState = useSelector((state) => state.auth.cartProducts);
 
@@ -58,7 +56,6 @@ const Cart = () => {
 
   const [coupon, setCoupon] = useState("");
   const [totalAfterDiscount, setTotalAfterDiscount] = useState(0);
-  const cartProduct = useSelector((state) => state.auth.cartProduct);
 
   const applyCouponCode = () => {
     dispatch(applyCoupon({ coupon }));
