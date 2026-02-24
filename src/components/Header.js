@@ -68,11 +68,11 @@ const Header = () => {
           {/* LOGO */}
           <Link className="text-decoration-none align-items-center d-flex gap-10" to="/">
             <img
-              src="/images/adisha/logo.png"
+              src="/images/adisha/logo.jpg"
               alt="Adisha Jewellery"
               className="img-fluid"
               style={{
-                maxHeight: "60px",
+                maxHeight: "70px",
                 objectFit: "contain",
               }}
             />

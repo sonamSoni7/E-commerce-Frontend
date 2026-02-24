@@ -104,7 +104,7 @@ const Home = () => {
           </div>
           <div className="col-12 col-md-6 ps-md-5">
             <h3 className="section-heading mb-4" style={{ fontFamily: "serif", fontSize: "2.5rem" }}>Why Choose Adisha Jewellery?</h3>
-            <p className="text-muted mb-5">We're committed to providing you with the finest jewelry pieces that combine exceptional craftsmanship, timeless design, and affordable luxury.</p>
+            <p className="text-muted mb-5">We're committed to providing you with the finest jewellery pieces that combine exceptional craftsmanship, timeless design, and affordable luxury.</p>
 
             <div className="d-flex flex-column gap-4">
               <div className="d-flex align-items-start gap-3">
@@ -113,7 +113,7 @@ const Home = () => {
                 </div>
                 <div>
                   <h5 className="mb-1 fw-bold">Authentic Quality</h5>
-                  <p className="text-muted mb-0 font-size-14">Every piece is carefully crafted and certified to ensure you receive genuine, high-quality jewelry.</p>
+                  <p className="text-muted mb-0 font-size-14">Every piece is carefully crafted and certified to ensure you receive genuine, high-quality jewellery.</p>
                 </div>
               </div>
               <div className="d-flex align-items-start gap-3">
@@ -131,7 +131,7 @@ const Home = () => {
                 </div>
                 <div>
                   <h5 className="mb-1 fw-bold">Affordable Luxury</h5>
-                  <p className="text-muted mb-0 font-size-14">Premium jewelry shouldn't break the bank. We offer competitive prices without compromising quality.</p>
+                  <p className="text-muted mb-0 font-size-14">Premium jewellery shouldn't break the bank. We offer competitive prices without compromising quality.</p>
                 </div>
               </div>
               <div className="d-flex align-items-start gap-3">

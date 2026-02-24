@@ -332,9 +332,11 @@ const SingleProduct = () => {
                 <div className="d-flex gap-10 flex-column  my-3">
                   <h3 className="product-heading">Shipping & Returns :</h3>
                   <p className="product-data">
-                    Free shipping and returns available on all orders! <br /> We
-                    ship all India domestic orders within
-                    <b> 5-10 business days!</b>
+                    Shipping Policy: All orders are processed <br/>
+                    and delivered within approximately one week<br/>
+                    <b> 5-7 business days!</b>
+                    Exchnage Policy: We offer easy and hassle-free <br/>
+                    exchanges on eligble products.<br/>
                   </p>
                 </div>
                 <div className="d-flex gap-10 align-items-center my-3">
