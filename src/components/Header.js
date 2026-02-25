@@ -66,17 +66,17 @@ const Header = () => {
         style={{ borderBottom: "1px solid var(--color-3b4149)" }}>
         <div className="container-xxl">
           {/* LOGO */}
-          <Link className="text-decoration-none align-items-center d-flex gap-10" to="/">
+          <Link className="text-decoration-none align-items-center d-flex" to="/">
             <img
-              src="/images/adisha/logo.jpg"
+              src="/images/adisha/logo.png"
               alt="Adisha Jewellery"
               className="img-fluid"
               style={{
-                maxHeight: "70px",
+                maxHeight: "90px",
                 objectFit: "contain",
               }}
             />
-            <h2 style={{ color: "var(--color-febd69)" }}>Adisha Jewellery</h2>
+            <h2 className="ms-2 ms-sm-3 ms-md-4 ms-lg-5" style={{ color: "var(--color-febd69)",fontFamily:"'Imperial Script', cursive",fontSize:"65px",fontWeight:400 }}>Adisha</h2>
           </Link>
 
           <div className="row align-items-center mt-3">
@@ -111,7 +111,7 @@ const Header = () => {
 
             {/* ICONS */}
             <div className="col-12 col-lg-4 order-2 order-lg-3 mt-3 mt-lg-0">
-              <div className="d-flex justify-content-center justify-content-lg-end gap-5">
+              <div className="d-flex justify-content-center justify-content-lg-end gap-4 gap-sm-4 gap-md-5 gap-lg-5 gap-xl-5">
 
                 <Link to="/wishlist" className="text-white">
                   <img
@@ -167,7 +167,7 @@ const Header = () => {
         <div className="container-xxl">
           <div className="row">
             <div className="col-12">
-              <nav className="d-flex flex-wrap justify-content-center gap-4 text-uppercase">
+              <nav className="d-flex flex-wrap justify-content-center gap-1 gap-sm-2 gap-md-3 gap-lg-4 gap-xl-5 text-uppercase">
 
                 <NavLink to="/" className="text-gold fw-bold p-1" style={navItemStyle}>
                   Home
@@ -187,13 +187,18 @@ const Header = () => {
                     My Orders
                   </NavLink>
                 )}
-                {authState?.user && (
+                {authState?.user ? (
                   <button
                     onClick={handleLogout}
                     className="btn bg-transparent nav-link border-0 text-gold p-0 fw-bold"
                   >
                     Logout
                   </button>
+                ):
+                (
+                  <NavLink to="/login" style={navItemStyle} className="text-gold fw-bold p-1">
+                    Login
+                  </NavLink>
                 )}
               </nav>
             </div>

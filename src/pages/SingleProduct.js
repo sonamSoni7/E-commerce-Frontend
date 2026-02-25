@@ -329,12 +329,12 @@ const SingleProduct = () => {
                     )}
                   </div>
                 </div>
-                <div className="d-flex gap-10 flex-column  my-3">
+                <div className="d-flex gap-10 flex-column my-2">
                   <h3 className="product-heading">Shipping & Returns :</h3>
                   <p className="product-data">
-                    Shipping Policy: All orders are processed <br/>
-                    and delivered within approximately one week<br/>
-                    <b> 5-7 business days!</b>
+                    Shipping Policy: All orders are processed and delivered<br/>
+                    within approximately one week <b> 5-7 business days!</b><br/>
+                    
                     Exchnage Policy: We offer easy and hassle-free <br/>
                     exchanges on eligble products.<br/>
                   </p>

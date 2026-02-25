@@ -38,9 +38,9 @@ const Contact = () => {
       <Meta title={"Contact Us"} />
       <BreadCrumb title="Contact Us" />
       <Container class1="contact-wrapper py-2 home-wrapper-2">
-            <div className="contact-wrapper d-flex flex-column align-items-center">
-              <div className="mb-5">
-                <h3 className="contact-title mb-4">Contact</h3>
+            <div className="contact-wrapper d-flex flex-column align-items-center"  style={{width: "100%"}}>
+              <div className="auth-card">
+                <h3 className="text-center mb-3">Contact</h3>
                 <form
                   action=""
                   onSubmit={formik.handleSubmit}

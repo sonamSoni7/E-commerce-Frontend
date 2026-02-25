@@ -617,7 +617,7 @@ footer .input-group-text {
 .auth-card {
   padding: 20px;
   background-color: white;
-  width: 500px;
+  width: 100%;
   margin: 30px auto;
   border-radius: 10px;
 }

@@ -48,7 +48,7 @@ const Login = () => {
 
       <Container class1="login-wrapper py-5 home-wrapper-2">
         <div className="row">
-          <div className="col-12">
+          <div className="col-0">
             <div className="auth-card">
               <h3 className="text-center mb-3">Login</h3>
               <form

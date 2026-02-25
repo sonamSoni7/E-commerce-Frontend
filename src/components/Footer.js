@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { BsGithub, BsInstagram } from "react-icons/bs";
+import { BsFacebook, BsGithub, BsInstagram } from "react-icons/bs";
 const Footer = () => {
   return (
     <>
@@ -54,6 +54,18 @@ const Footer = () => {
                     }}
                   >
                     <BsGithub className="fs-5" />
+                  </a>
+                  <a
+                    href="https://Facebook.com/"
+                    className="d-flex align-items-center justify-content-center rounded-circle"
+                    style={{
+                      width: "38px",
+                      height: "38px",
+                      backgroundColor: "var(--color-3b4149)",
+                      color: "white",
+                    }}
+                  >
+                    <BsFacebook className="fs-5" />
                   </a>
                 </div>
               </div>

@@ -31,7 +31,7 @@ const Home = () => {
   }, []);
 
   return (
-    <>
+    <div style={{fontFamily:"'EB Garamond', serif"}}>
       <Container class1="home-wrapper-1 py-0 bg-cream">
         <div className="row">
           <div className="col-12 p-0">
@@ -44,7 +44,7 @@ const Home = () => {
               />
               <div className="main-banner-content position-absolute text-center d-flex flex-column justify-content-center align-items-center px-3 px-md-5" style={{ inset: 0, background: "rgba(0,0,0,0.35)" }}>
                 <h4 className="text-gold mb-2 text-uppercase" style={{ letterSpacing: "3px", fontSize: "clamp(0.75rem, 2vw, 1rem)" }}>Premium Handcrafted Jewelry</h4>
-                <h5 className="text-white mb-3" style={{ fontFamily: "serif", fontSize: "clamp(1.6rem, 5vw, 3rem)", lineHeight: "1.2" }}>Discover Timeless Elegance</h5>
+                <h5 className="text-white mb-3" style={{ fontSize: "clamp(1.6rem, 5vw, 3rem)", lineHeight: "1.2",letterSpacing:"0.5px" }}>Discover Timeless Elegance</h5>
                 <p className="text-white mb-4" style={{ fontSize: "clamp(0.9rem, 3vw, 1.2rem)", maxWidth: "600px" }}>From stunning necklaces to exquisite bracelets.</p>
                 <Link className="button text-uppercase px-4 py-2" to="/product">Shop Our Collection</Link>
               </div>
@@ -56,7 +56,7 @@ const Home = () => {
       <Container class1="home-wrapper-2 py-5">
         <div className="row">
           <div className="col-12 text-center mb-5">
-            <h3 className="section-heading" style={{ fontFamily: "serif", fontSize: "2.5rem" }}>Shop By Collection</h3>
+            <h3 className="section-heading" style={{ fontSize: "2.5rem" }}>Shop By Collection</h3>
             <p className="text-muted">Explore our curated collections designed for every occasion.</p>
           </div>
 
@@ -182,7 +182,7 @@ const Home = () => {
           <ProductCard data={productState && productState?.filter((item) => item.tags === "popular")} />
         </div>
       </Container>
-    </>
+    </div>
   );
 };
 
