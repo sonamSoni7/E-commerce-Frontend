@@ -191,6 +191,7 @@ const Header = () => {
                   <button
                     onClick={handleLogout}
                     className="btn bg-transparent nav-link border-0 text-gold p-0 fw-bold"
+                    style={navItemStyle}
                   >
                     Logout
                   </button>
