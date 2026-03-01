@@ -72,14 +72,15 @@ const Header = () => {
               alt="Adisha Jewellery"
               className="img-fluid"
               style={{
+                maxWidth:"110px",
                 maxHeight: "110px",
                 objectFit: "contain",
               }}
             />
             <div className="d-flex flex-col justify-content-center align-items-center w-100">
-              <h2 className="ms-3 ms-sm-5 ms-md-5 ms-lg-5" style={{ color: "var(--color-febd69)",fontFamily:"'Imperial Script', cursive",fontSize:"65px",fontWeight:400 }}>Adisha</h2>
-
+              <h2 style={{ color: "var(--color-febd69)",fontFamily:"'Imperial Script', cursive",fontSize:"65px",fontWeight:400}}>Adisha</h2>
             </div>
+            <div style={{ width: "110px" }} />
           </Link>
 
           <div className="row align-items-center mt-3">
