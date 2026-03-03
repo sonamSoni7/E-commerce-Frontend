@@ -56,7 +56,7 @@ const Footer = () => {
                     <BsGithub className="fs-5" />
                   </a>
                   <a
-                    href="https://Facebook.com/"
+                    href="https://www.facebook.com/share/1BZ8EHkwQt/?mibextid=wwXIfr"
                     className="d-flex align-items-center justify-content-center rounded-circle"
                     style={{
                       width: "38px",
