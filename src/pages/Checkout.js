@@ -175,7 +175,7 @@ const Checkout = () => {
       return;
     }
 
-    const { amount, id: order_id, currency } = result.data.order;
+    const { amount, id: order_id } = result.data.order;
 
     const options = {
       key: process.env.REACT_APP_RAZORPAY_KEY_ID,
