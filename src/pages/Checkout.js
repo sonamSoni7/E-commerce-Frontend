@@ -180,7 +180,7 @@ const Checkout = () => {
     const options = {
       key: process.env.REACT_APP_RAZORPAY_KEY_ID,
       amount: amount,
-      currency: currency,
+      currency: "INR",
       name: "Adisha Jewellery",
       description: "Test Transaction",
       order_id: order_id,

@@ -30,9 +30,9 @@ const Login = () => {
     onSubmit: (values) => {
       dispatch(loginUser(values));
 
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 1000);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     },
   });
   useEffect(() => {
