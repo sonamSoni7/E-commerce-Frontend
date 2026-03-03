@@ -128,6 +128,20 @@ const applyCoupon = async (data) => {
     return response.data;
   }
 };
+
+const removeCoupon = async () => {
+  const response = await axios.delete(`${base_url}user/cart/remove-coupon`, config);
+  if (response.data) {
+    return response.data;
+  }
+};
+
+const getCouponStatus = async () => {
+  const response = await axios.get(`${base_url}user/cart/coupon-status`, config);
+  if (response.data) {
+    return response.data;
+  }
+};
 export const authService = {
   register,
   login,
@@ -143,6 +157,8 @@ export const authService = {
   resetPass,
   emptyCart,
   applyCoupon,
+  removeCoupon,
+  getCouponStatus,
 };
 
 

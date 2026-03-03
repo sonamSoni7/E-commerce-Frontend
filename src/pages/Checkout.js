@@ -9,9 +9,9 @@ import axios from "axios";
 import { config } from "../utils/axiosConfig";
 import {
   createAnOrder,
-  deleteUserCart,
   getUserCart,
   resetState,
+  getCouponStatus,
 } from "../features/user/userSlice";
 
 let shippingSchema = yup.object({
@@ -24,25 +24,23 @@ let shippingSchema = yup.object({
   pincode: yup.number("Pincode No is Required").required().positive().integer(),
 });
 
+const SHIPPING = 100;
+
 const Checkout = () => {
   const dispatch = useDispatch();
   const cartState = useSelector((state) => state?.auth?.cartProducts);
   const authState = useSelector((state) => state?.auth);
-  const [totalAmount, setTotalAmount] = useState(null);
+  const couponStatus = useSelector((state) => state?.auth?.couponStatus);
+
+  // itemsSubtotal: sum of cart item prices (no discount, no shipping)
+  const [itemsSubtotal, setItemsSubtotal] = useState(0);
+  // discountedItems: items after coupon discount (no shipping)
+  const [discountedItems, setDiscountedItems] = useState(null);
+  // Track whether THIS checkout session placed an order (prevents stale redirect)
+  const [orderPlaced, setOrderPlaced] = useState(false);
+
   const [, setShippingInfo] = useState(null);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    let sum = 0;
-    for (let index = 0; index < cartState?.length; index++) {
-      sum = sum + Number(cartState[index].quantity) * cartState[index].price;
-    }
-    if (authState?.cartProduct && typeof authState?.cartProduct !== 'object') {
-      setTotalAmount(Number(authState?.cartProduct));
-    } else {
-      setTotalAmount(Number(sum));
-    }
-  }, [cartState, authState]);
 
   const getTokenFromLocalStorage = localStorage.getItem("customer")
     ? JSON.parse(localStorage.getItem("customer"))
@@ -56,21 +54,52 @@ const Checkout = () => {
     },
   };
 
+  // On mount: load cart and check coupon validity
   useEffect(() => {
     dispatch(getUserCart(config2));
+    dispatch(getCouponStatus());
     window.scrollTo(0, 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Compute items subtotal from cart
+  useEffect(() => {
+    let sum = 0;
+    for (let index = 0; index < cartState?.length; index++) {
+      sum = sum + Number(cartState[index].quantity) * cartState[index].price;
+    }
+    setItemsSubtotal(sum);
+  }, [cartState]);
+
+  // Sync discounted items from coupon status (populated on page load)
+  useEffect(() => {
+    if (couponStatus?.applied && couponStatus.totalAfterDiscount) {
+      setDiscountedItems(Number(couponStatus.totalAfterDiscount));
+    } else if (couponStatus?.expired) {
+      // Coupon was found expired — clear discount
+      setDiscountedItems(null);
+    }
+  }, [couponStatus]);
+
+  // Also listen to cartProduct from Redux (set when user applies coupon on Cart page)
+  useEffect(() => {
+    const cp = authState?.cartProduct;
+    if (cp && typeof cp !== "object") {
+      setDiscountedItems(Number(cp));
+    }
+  }, [authState?.cartProduct]);
+
+  // Navigate to My Orders ONLY after THIS checkout session's order is created
   useEffect(() => {
     if (
+      orderPlaced &&
       authState?.orderedProduct?.order !== null &&
       authState?.orderedProduct?.success === true
     ) {
       navigate("/my-orders");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authState]);
+  }, [authState, orderPlaced]);
 
   const [, setCartProductState] = useState([]);
 
@@ -129,9 +158,12 @@ const Checkout = () => {
     );
 
     if (!res) {
-      alert("Razorpay SDK faild to Load");
+      alert("Razorpay SDK failed to Load");
       return;
     }
+
+    // The backend /checkout endpoint calculates:
+    //   discountedItems + Rs. 100 shipping = finalAmount (in paise via Razorpay)
     const result = await axios.post(
       `${process.env.REACT_APP_API_BASE_URL}/api/user/order/checkout`,
       {},
@@ -146,12 +178,11 @@ const Checkout = () => {
     const { amount, id: order_id, currency } = result.data.order;
 
     const options = {
-      key: process.env.REACT_APP_RAZORPAY_KEY_ID, // Razorpay Key ID from environment
+      key: process.env.REACT_APP_RAZORPAY_KEY_ID,
       amount: amount,
       currency: currency,
       name: "Adisha Jewellery",
       description: "Test Transaction",
-
       order_id: order_id,
       handler: async function (response) {
         const data = {
@@ -161,19 +192,23 @@ const Checkout = () => {
           razorpaySignature: response.razorpay_signature,
         };
 
-        const result = await axios.post(
+        const verificationResult = await axios.post(
           `${process.env.REACT_APP_API_BASE_URL}/api/user/order/paymentVerification`,
           data,
           config
         );
 
+        // Pass the Razorpay-charged amount (paise) — backend uses it as
+        // the ground-truth totalPriceAfterDiscount stored on the order.
+        // Backend createOrder will also handle Cart.deleteMany — do NOT
+        // dispatch deleteUserCart separately (race condition).
+        setOrderPlaced(true); // flag THIS session as having placed an order
         dispatch(
           createAnOrder({
-            paymentInfo: result.data,
+            paymentInfo: { ...verificationResult.data, amount },
             shippingInfo: JSON.parse(localStorage.getItem("address")),
           })
         );
-        dispatch(deleteUserCart(config2));
         localStorage.removeItem("address");
         dispatch(resetState());
       },
@@ -190,6 +225,13 @@ const Checkout = () => {
     const paymentObject = new window.Razorpay(options);
     paymentObject.open();
   };
+
+  // Displayed totals
+  // totalPayable = (discounted items if coupon else items) + shipping
+  const effectiveItems = discountedItems !== null ? discountedItems : itemsSubtotal;
+  const totalPayable = effectiveItems + SHIPPING;
+  const isCouponApplied = discountedItems !== null && couponStatus?.applied;
+
   return (
     <>
       <Container class1="checkout-wrapper py-5 home-wrapper-2">
@@ -476,27 +518,43 @@ const Checkout = () => {
                       </div>
                     </div>
                   );
-
                 })}
             </div>
             <div className="border-bottom py-4">
               <div className="d-flex justify-content-between align-items-center">
-                <p className="total">Subtotal</p>
+                <p className="total">Subtotal (items)</p>
                 <p className="total-price">
-                  Rs. {totalAmount ? Number(totalAmount).toFixed(2) : "0.00"}
+                  Rs. {Number(itemsSubtotal).toFixed(2)}
                 </p>
               </div>
+              {isCouponApplied && (
+                <div className="d-flex justify-content-between align-items-center text-success">
+                  <p className="mb-0 total">
+                    Coupon Discount
+                    {couponStatus?.name ? ` (${couponStatus.name})` : ""}
+                    {couponStatus?.discount ? ` – ${couponStatus.discount}%` : ""}
+                  </p>
+                  <p className="mb-0 total-price">
+                    – Rs. {(itemsSubtotal - discountedItems).toFixed(2)}
+                  </p>
+                </div>
+              )}
               <div className="d-flex justify-content-between align-items-center">
                 <p className="mb-0 total">Shipping</p>
-                <p className="mb-0 total-price">Rs. 100.00</p>
+                <p className="mb-0 total-price">Rs. {SHIPPING}.00</p>
               </div>
             </div>
             <div className="d-flex justify-content-between align-items-center border-bottom py-4">
               <h4 className="total">Total</h4>
               <h5 className="total-price">
-                Rs. {totalAmount ? (Number(totalAmount) + 100).toFixed(2) : "0.00"}
+                Rs. {Number(totalPayable).toFixed(2)}
               </h5>
             </div>
+            {isCouponApplied && (
+              <p className="text-muted small mt-2">
+                Items after discount: Rs. {Number(discountedItems).toFixed(2)} + Rs. {SHIPPING} shipping
+              </p>
+            )}
           </div>
         </div>
       </Container>

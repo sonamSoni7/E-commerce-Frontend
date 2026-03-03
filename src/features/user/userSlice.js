@@ -156,6 +156,28 @@ export const applyCoupon = createAsyncThunk(
   }
 );
 
+export const removeCoupon = createAsyncThunk(
+  "user/cart/coupon/remove",
+  async (_, thunkAPI) => {
+    try {
+      return await authService.removeCoupon();
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+export const getCouponStatus = createAsyncThunk(
+  "user/cart/coupon/status",
+  async (_, thunkAPI) => {
+    try {
+      return await authService.getCouponStatus();
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
 export const resetState = createAction("Reset_all");
 
 const getCustomerfromLocalStorage = localStorage.getItem("customer")
@@ -457,6 +479,32 @@ export const authSlice = createSlice({
         if (state.isError) {
           toast.error("Invalid Coupon!");
         }
+      })
+      .addCase(removeCoupon.fulfilled, (state) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.cartProduct = null;       // clear discount amount
+        state.couponStatus = { applied: false }; // clear coupon state so Checkout updates immediately
+        toast.info("Coupon removed.");
+      })
+      .addCase(removeCoupon.rejected, (state) => {
+        state.isLoading = false;
+        state.isError = true;
+      })
+      .addCase(getCouponStatus.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.couponStatus = action.payload; // { applied, name, discount, totalAfterDiscount } or { applied: false, expired }
+        // If a coupon was previously reflected in cartProduct but is now expired, clear it
+        if (!action.payload?.applied) {
+          state.cartProduct = null;
+        } else {
+          // Restore discounted total so Checkout can read it
+          state.cartProduct = String(action.payload.totalAfterDiscount);
+        }
+      })
+      .addCase(getCouponStatus.rejected, (state) => {
+        state.isLoading = false;
       })
       .addCase(resetState, () => initialState);
   },
